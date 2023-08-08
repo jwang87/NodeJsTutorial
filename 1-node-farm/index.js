@@ -1,5 +1,6 @@
 const fs = require('fs');
 const http = require('http');
+const url = require('url');
 
 ///////////////////////////
 // File
@@ -33,8 +34,27 @@ const http = require('http');
 ///////////////////////////////////
 // Server
 
+const data = fs.readFileSync(`${__dirname}/starter/dev-data/data.json`, 'utf-8');
+const dataObj = JSON.parse(data);
+
 const server = http.createServer((req, res) => {
-    res.end('Hello from the server');
+    const pathName = req.url;
+
+    if(pathName == '/overview' || pathName == '/'){
+        res.end('This is a overview');
+    } else if(pathName == '/product') {
+        res.end('This is the product');
+    } else if (pathName == '/api') {
+        res.writeHead(200, {'Content-type': 'application/json'});
+        res.end(data);
+    } else {
+        res.writeHead(404, {
+            'Content-type': 'text/html',
+            'my-own-header': 'Hello-World'
+        });
+        res.end('<h1>This page cannot be found!</h1>')
+    }
+        
 });
 
 server.listen(8081, '127.0.0.1', () => {
